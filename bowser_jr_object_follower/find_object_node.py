@@ -14,7 +14,7 @@ class find_object(Node):
 	def __init__(self):
 		super().__init__('find_object')
 		# Set Parameters
-		self.declare_parameter('show_image_bool', True)
+		self.declare_parameter('show_image_bool', False)
 		self.declare_parameter('window_name', "Raw Image")
 
 		#Determine Window Showing Based on Input
