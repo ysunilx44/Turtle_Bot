@@ -70,6 +70,7 @@ class find_object(Node):
 				cv2.circle(self._imgBGR, (int(x), int(y)), int(radius),
 								(0, 255, 255), 2)
 				cv2.circle(self._imgBGR, (int(x), int(y)), 5, (0, 0, 255,), -1)
+		self._imgBGR = CvBridge().cv2_to_compressed_imgmsg(self._imgBGR, dst_format='jpeg')
 		self.img_publisher.publish(self._imgBGR)
 
 		#print("Centroid X: %0.2f Centroid Y: %0.2f" % (x, y))
