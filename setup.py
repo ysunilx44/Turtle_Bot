@@ -20,6 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'find_object_node=bowser_jr_object_follower.find_object_node:main',
         ],
     },
 )
