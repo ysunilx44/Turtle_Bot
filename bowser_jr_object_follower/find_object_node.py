@@ -76,7 +76,7 @@ class find_object(Node):
 				cv2.circle(self._imgBGR, (int(x), int(y)), 5, (0, 0, 255,), -1)
 				self.centroid.x = x
 				self.centroid.y = y
-				self.centroid.z = 0
+				self.centroid.z = 0.0
 				self.centroid_publisher.publish(self.centroid)
 		self._imgBGR = CvBridge().cv2_to_compressed_imgmsg(self._imgBGR, dst_format='jpeg')
 
