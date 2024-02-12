@@ -78,6 +78,11 @@ class find_object(Node):
 				self.centroid.y = y
 				self.centroid.z = 0.0
 				self.centroid_publisher.publish(self.centroid)
+		else:
+			self.centroid.x = 0.0
+			self.centroid.y = 0.0
+			self.centroid.z = 44.0
+			self.centroid_publisher.publish(self.centroid)
 		self._imgBGR = CvBridge().cv2_to_compressed_imgmsg(self._imgBGR, dst_format='jpeg')
 
 		self.img_publisher.publish(self._imgBGR)

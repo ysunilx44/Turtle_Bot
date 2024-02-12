@@ -12,6 +12,11 @@ def generate_launch_description():
             executable='find_object_node',
             name='find_object',
         ),
+        Node(
+            package='bowser_jr_object_follower',
+            executable='rotate_robot_node',
+            name='rotate_robot',
+        ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(PathJoinSubstitution([
                 FindPackageShare('turtlebot3_bringup'),  # Dynamically finds the package path

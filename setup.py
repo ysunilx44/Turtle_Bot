@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'find_object_node=bowser_jr_object_follower.find_object_node:main',
+            'rotate_robot_node=bowser_jr_object_follower.rotate_robot:main',
         ],
     },
 )
