@@ -9,6 +9,8 @@ from rclpy.qos import QoSProfile, QoSDurabilityPolicy, QoSReliabilityPolicy, QoS
 import sys
 from cv_bridge import CvBridge
 import numpy as np
+from geometry_msgs.msg import Point
+
 
 class find_object(Node):
 	def __init__(self):
@@ -46,9 +48,11 @@ class find_object(Node):
 		self.find_object_subscriber # Prevents unused variable warning.
 
 		self.img_publisher = self.create_publisher(CompressedImage, '/find_object/compressed', 10)
+		self.centroid_publisher = self.create_publisher(Point, '/object_centroid', 10)
 
 		self.blueLower = (100,150,50)
 		self.blueUpper = (140,255,255)
+		self.centroid = Point()
 
 	def _image_callback(self, CompressedImage):	
 		# The "CompressedImage" is transformed to a color image in BGR space and is store in "_imgBGR"
@@ -70,8 +74,14 @@ class find_object(Node):
 				cv2.circle(self._imgBGR, (int(x), int(y)), int(radius),
 								(0, 255, 255), 2)
 				cv2.circle(self._imgBGR, (int(x), int(y)), 5, (0, 0, 255,), -1)
+				self.centroid.x = x
+				self.centroid.y = y
+				self.centroid.z = 0
+				self.centroid_publisher.publish(self.centroid)
 		self._imgBGR = CvBridge().cv2_to_compressed_imgmsg(self._imgBGR, dst_format='jpeg')
+
 		self.img_publisher.publish(self._imgBGR)
+		
 
 		#print("Centroid X: %0.2f Centroid Y: %0.2f" % (x, y))
 		#cv2.imshow('frame',self._imgBGR)
