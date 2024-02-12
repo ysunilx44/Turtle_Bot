@@ -50,8 +50,12 @@ class find_object(Node):
 		self.img_publisher = self.create_publisher(CompressedImage, '/find_object/compressed', 10)
 		self.centroid_publisher = self.create_publisher(Point, '/object_centroid', 10)
 
-		self.blueLower = (100,150,50)
-		self.blueUpper = (140,255,255)
+		# self.blueLower = (100,150,50)
+		# self.blueUpper = (140,255,255)
+		self.blueball = np.uint8([[[79,173,206]]])
+		self.hsv_color = cv2.cvtColor(self.blueball,cv2.COLOR_RGB2HSV) # NOTE: THIS IS NOW RGB2HSV
+		self.blueLower = np.array([self.hsv_color[0][0][0]-20, self.hsv_color[0][0][1]*(150/255), self.hsv_color[0][0][2]*(50/255)], np.uint8)
+		self.blueUpper = np.array([self.hsv_color[0][0][0]+20, 255, 255], np.uint8)
 		self.centroid = Point()
 
 	def _image_callback(self, CompressedImage):	
