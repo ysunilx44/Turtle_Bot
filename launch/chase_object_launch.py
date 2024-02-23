@@ -17,6 +17,11 @@ def generate_launch_description():
             executable='get_object_range_node',
             name='get_object_range',
         ),
+        Node(
+            package='bowser_jr_object_follower',
+            executable='chase_object_node',
+            name='chase_object',
+        ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(PathJoinSubstitution([
                 FindPackageShare('turtlebot3_bringup'),  # Dynamically finds the package path
