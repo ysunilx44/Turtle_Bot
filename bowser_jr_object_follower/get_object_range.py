@@ -44,17 +44,18 @@ class get_object_range(Node):
 				'/scan',
 				self.range_callback,
                 image_qos_profile)
-        self.centroid_subscriber
+        self.range_subscriber
 
         self.ang_pos_cam = None
         
-        self.vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
-        self.rotate_right = Twist()
-        self.rotate_right.angular.z = -1.0
-        self.rotate_left = Twist()
-        self.rotate_left.angular.z = 1.0
-        self.stop = Twist()
-        self.stop.angular.z = 0.0
+        self.ball_pos_publisher = self.create_publisher(Twist, '/ball_pos', 10)
+        self.pos = Twist()
+        self.pos.linear.x = 0.0
+        self.pos.linear.y = 0.0
+        self.pos.linear.z = 0.0
+        self.pos.angular.x = 0.0
+        self.pos.angular.y = 0.0
+        self.pos.angular.z = 0.0
 
     def centroid_callback(self, centroid):
         if centroid.z == 44:
@@ -62,16 +63,34 @@ class get_object_range(Node):
         else: 
             x = centroid.x - 160 # make the middle of the frame
             self.ang_pos_cam = (62.2/320) * x * (np.pi/180) # ang pos in radians, left is (-), right is (+)
-            #print("angle")
-            #print(self.ang_pos_cam*(180/np.pi))
+            # print("angle")
+            # print(self.ang_pos_cam*(180/np.pi))
     def range_callback(self, laserScan):
         if self.ang_pos_cam == None:
             dist = None
+            self.pos.angular.z = 44.0
+            self.pos.linear.x = 44.0
+            self.ball_pos_publisher.publish(self.pos)
         else: 
-            ind = int((self.ang_pos_cam - laserScan.angle_min) / laserScan.angle_increment)
-            dist = np.mean(laserScan.ranges[ind-25:ind+25])
-            #print("dist")
-            #print(dist)
+            ranges = np.array(laserScan.ranges)
+            # print("ang inc", laserScan.angle_increment)
+            # print("range len", len(ranges))
+            ind = int(((-self.ang_pos_cam) - laserScan.angle_min) / laserScan.angle_increment)
+            #dist = laserScan.ranges[ind]
+            l_b = ind - 1
+            u_b = ind + 1
+            inds = [l_b,ind,u_b]
+            dist = np.nanmean(ranges[inds])
+            self.pos.angular.z = self.ang_pos_cam
+            self.pos.linear.x = dist 
+            self.ball_pos_publisher.publish(self.pos)
+            # print("\n ranges vector", ranges)
+            # print('l_b:', l_b)
+            # print('u_b:', u_b)
+            # print('ind: {}'.format(ind))
+            # print("ranges" , ranges[inds])
+            # print("dist: ", dist)
+            
 
         
 
