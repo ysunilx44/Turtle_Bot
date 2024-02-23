@@ -82,7 +82,7 @@ class get_object_range(Node):
             inds = [l_b,ind,u_b]
             dist = np.nanmean(ranges[inds])
             self.pos.angular.z = self.ang_pos_cam
-            self.pos.linear.x = dist 
+            self.pos.linear.x = float(dist)
             self.ball_pos_publisher.publish(self.pos)
             # print("\n ranges vector", ranges)
             # print('l_b:', l_b)
