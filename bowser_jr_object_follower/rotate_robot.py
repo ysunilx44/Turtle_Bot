@@ -27,7 +27,7 @@ class rotate_robot(Node):
     def rotate_callback(self, centroid):
         x = centroid.x
         z = centroid.z
-        if z == 44:
+        if z == 44: \
             self.vel_publisher.publish(self.stop)
         elif x > 190:
             self.vel_publisher.publish(self.rotate_right)

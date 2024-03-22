@@ -24,6 +24,7 @@ setup(
             'rotate_robot_node=bowser_jr_object_follower.rotate_robot:main',
             'get_object_range_node=bowser_jr_object_follower.get_object_range:main',
             'chase_object_node=bowser_jr_object_follower.chase_object:main',
+            'get_nearest_object_node=bowser_jr_object_follower.get_nearest_object:main',
         ],
     },
 )
