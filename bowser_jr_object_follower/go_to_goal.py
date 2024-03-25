@@ -64,17 +64,12 @@ class go_to_goal(Node):
         self.update_Odometry(data)
 
         globPos = np.array([self.globalPos.x, self.globalPos.y])
-        print("nearest_obj", self.nearest_obj)
-        print("globalpos", self.globalPos)
         x_o = np.array([self.globalPos.x + self.nearest_obj.x*np.cos(self.globalAng + self.nearest_obj.z), self.globalPos.y + self.nearest_obj.x*np.sin(self.globalAng + self.nearest_obj.z)])  # distance from nearest point (x,y), position of nearest obstacle
-        print("x_o", x_o)
         x_g =  self.waypoints[self.i] # position of goal (x,y)
         u_ao = globPos - x_o
-        print("u_ao", u_ao)
         u_fwc = self.get_orthogonalc(u_ao) # vector pointing in the clockwise direction perpendicular to u_ao
         u_fwcc = self.get_orthogonalcc(u_ao) # vector pointing in the counterclockwise direction perpendicular to u_ao
         u_gtg = [(x_g[0] - self.globalPos.x), (x_g[1] - self.globalPos.y)] # vector pointing to the goal
-        print("u_fwc", u_fwc)
         d = 0.25 # distance buffer from object [m], was 0.35
         eps = 0.15 # fat guard, minimum buffer zone from obstacle [m], was 0.2
         
@@ -85,8 +80,7 @@ class go_to_goal(Node):
                 self.vel.angular.z = 1.0
             else:
                 x_g = self.waypoints[self.i]
-        print("state", self.currentState)
-        print("current waypoint", x_g)
+
 
         # State 1 u_gtg
         if self.currentState == 1:

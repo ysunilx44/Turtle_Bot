@@ -7,11 +7,11 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     return LaunchDescription([
-        Node(
-            package='bowser_jr_object_follower',
-            executable='get_nearest_object_node',
-            name='get_nearest_object',
-        ),
+        # Node(
+        #     package='bowser_jr_object_follower',
+        #     executable='get_nearest_object_node',
+        #     name='get_nearest_object',
+        # ),
         Node(
             package='bowser_jr_object_follower',
             executable='go_to_goal_node',
