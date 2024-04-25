@@ -53,7 +53,7 @@ class identify_sign(Node):
         # self.img_publisher = self.create_publisher(CompressedImage, '/identify_sign/compressed', 10)
         self.state_publisher = self.create_publisher(Point, '/state', 10)
         self.state = Point()
-        self.clf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/svm_classifier_model.joblib')
+        self.clf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/svm_rm_classifier_model.joblib')
         self.svmclf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/svm_no_wall_classifier_model.joblib')
         self.MLPclf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/MLP_ycropped_classifier_model.joblib')
         self.count = 0.0
@@ -64,25 +64,28 @@ class identify_sign(Node):
     def _image_callback(self, CompressedImage):	
         features = self.preprocess_image(CompressedImage)
         features = np.array([features])
-        featuresog = self.preprocess_image_og(CompressedImage)
-        featuresog = np.array([featuresog])
-        # y_pred_og = self.clf.predict(featuresog)
+        featuresrm = self.preprocess_imagerm(CompressedImage)
+        featuresrm = np.array([featuresrm])
+        y_pred_rm = self.clf.predict(featuresrm)
         y_pred_svm = self.svmclf.predict(features)
         y_pred_MLP = self.MLPclf.predict(features)
-        # print("og", y_pred_og) 
-        # print("svm", y_pred_svm)        
-        # print("MLP", y_pred_MLP)
-        if y_pred_svm == 1: # left
+        print("rm", y_pred_rm) 
+        print("svm", y_pred_svm)        
+        print("MLP", y_pred_rm)
+        if y_pred_rm == 1: # left
             self.state.x = 3.0
-        elif y_pred_svm == 2: # right
+        elif y_pred_rm == 2: # right
             self.state.x = 4.0
-        elif y_pred_svm == 3 or y_pred_svm == 4: # u-turn or stop
+        elif y_pred_rm == 5: # goal 
+            self.state.x = 6.0
+        elif y_pred_svm == 3 or y_pred_rm == 4: # u-turn or stop
             self.state.x = 5.0
-        elif y_pred_svm == 5 or y_pred_MLP == 0: # goal or wall
+        elif y_pred_MLP == 0: # wall
             self.state.x = 6.0
         self.state.y = self.count
         self.count += 1.0
-        # print("state", self.state.x)
+        print("state", self.state.x)
+
         # print("prediction number", self.count)
         # print("sign", y_pred)
         # print("state", self.state.x)
@@ -91,37 +94,7 @@ class identify_sign(Node):
         # self.get_logger().info('state:{}'.format(self.state.x))
 
         self.state_publisher.publish(self.state)
-        # The "CompressedImage" is transformed to a color image in BGR space and is store in "_imgBGR"
-        # self._imgBGR = CvBridge().compressed_imgmsg_to_cv2(CompressedImage, "bgr8")
-        # blurred = cv2.GaussianBlur(self._imgBGR, (11, 11), 0)
-        # hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-        # mask = cv2.inRange(hsv, self.blueLower, self.blueUpper)
-        # mask = cv2.erode(mask, None, iterations=2)
-        # mask = cv2.dilate(mask, None, iterations=2)
-        
-        # cnts, _ = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL,
-        #                         cv2.CHAIN_APPROX_SIMPLE)
-        # center = None
-        # if len(cnts) > 0:
-        #     c = max(cnts, key=cv2.contourArea)
-        #     ((x,y), radius) = cv2.minEnclosingCircle(c)
 
-        #     if radius > 10:
-        #         cv2.circle(self._imgBGR, (int(x), int(y)), int(radius),
-        #                         (0, 255, 255), 2)
-        #         cv2.circle(self._imgBGR, (int(x), int(y)), 5, (0, 0, 255,), -1)
-        #         self.centroid.x = x
-        #         self.centroid.y = y
-        #         self.centroid.z = 0.0
-        #         self.centroid_publisher.publish(self.centroid)
-        # else:
-        #     self.centroid.x = 0.0
-        #     self.centroid.y = 0.0
-        #     self.centroid.z = 44.0
-        #     self.centroid_publisher.publish(self.centroid)
-        # self._imgBGR = CvBridge().cv2_to_compressed_imgmsg(self._imgBGR, dst_format='jpeg')
-
-        # self.img_publisher.publish(self._imgBGR)
 		
     def preprocess_image(self, image):
         # Load the image
@@ -131,7 +104,7 @@ class identify_sign(Node):
         img = cv2.resize(img, (64, 64))
         gray_image = color.rgb2gray(img[y:y+h, :])
         hsv_image = cv2.cvtColor(img[y:y+h, :], cv2.COLOR_RGB2HSV)
-        cv2.imshow('frame',img[y:y+h, :])
+        # cv2.imshow('frame',img[y:y+h, :])
         if(self._display_image):
             # Display the image in a window
             self.show_image(img[y:y+h, :])
@@ -149,22 +122,65 @@ class identify_sign(Node):
 
         features = np.hstack([hog_features, hsv_image, edges_resized]) 
         return features
-    def preprocess_image_og(self, image):
-        # Load the image
+    def preprocess_imagerm(self, image): 
+        # Load the image 
+        # img = cv2.imread(image_path) 
         img = CvBridge().compressed_imgmsg_to_cv2(image, "bgr8")
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        # x, y, w, h = 12, 12, 40, 40
-        img = cv2.resize(img, (64, 64))
-        gray_image = color.rgb2gray(img)
-        hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-        # gray_image = cv2.resize(gray_image, (64, 64))
-        hog_features = hog(gray_image, orientations=8, pixels_per_cell=(8, 8),
-                        cells_per_block=(2, 2), block_norm='L2', feature_vector=True)
-        hsv_image = cv2.GaussianBlur(hsv_image, (5, 5), 0)
-        hsv_image = hsv_image.flatten()  
-        hsv_image = hsv_image / 255.0  # norm 
-
-        features = np.hstack([hog_features, hsv_image]) 
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) 
+        x, y, w, h = 12, 12, 40, 40 #12 to 10, 40-44 
+        img = cv2.resize(img, (64, 64)) 
+        gray_image = color.rgb2gray(img[y:y+h, :]) 
+        img = img[y:y+h, :] # keep all x 
+        hsv_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV) 
+        # gray_image = cv2.resize(gray_image, (64, 64)) 
+    
+        sobelx = cv2.Sobel(gray_image, cv2.CV_64F, 1, 0, ksize=3) 
+        sobely = cv2.Sobel(gray_image, cv2.CV_64F, 0, 1, ksize=3) 
+        sobel_edges = np.hypot(sobelx, sobely) 
+        edges_resized = 30 * sobel_edges.flatten() / 255 
+    
+        hue = hsv_image[:,:,0] 
+        sat = hsv_image[:,:,1] 
+        val = hsv_image[:,:,2] 
+    
+        #red mask 
+        redHue = ((hue >0) & (hue < 25)) | ((hue> 170) & (hue<200)) 
+        redSat = ((sat>150) & (sat <255)) 
+        redVal = ((val>50) & (val <255)) 
+        redMask = (redHue & redSat & redVal) 
+        #green Mask  
+        greenHue = (hue > 55) & (hue < 95) 
+        greenSat = ((sat>100) & (sat <255)) 
+        greenVal = ((val>30) & (val <150)) 
+        greenMask = (greenHue & greenSat & greenVal) 
+        #blue hue  
+        blueHue = (hue > 110) & (hue < 130) 
+        blueSat = ((sat>140) & (sat <235)) 
+        blueVal = ((val>0) & (val <100)) 
+        blueMask = (blueHue & blueSat & blueVal) 
+    
+        kernel = np.ones((3,3),np.uint8) 
+        #Fills in the objects to help with contours  
+        rm = (redMask* 255).astype(np.uint8) 
+        bm = (blueMask* 255).astype(np.uint8) 
+        gm = (greenMask* 255).astype(np.uint8) 
+        rm = cv2.dilate(rm, kernel, iterations=5) 
+        bm = cv2.dilate(bm, kernel, iterations=1) 
+        gm = cv2.dilate(gm, kernel, iterations=2) 
+    
+        rm = rm.flatten() / 255.0 
+        gm = gm.flatten() / 255.0 
+        bm = bm.flatten() / 255.0 
+        
+        hog_features = hog(gray_image, orientations=8, pixels_per_cell=(8, 8), 
+                        cells_per_block=(2, 2), block_norm='L2', feature_vector=True) 
+    
+        hsv_image = cv2.GaussianBlur(hsv_image, (5, 5), 0) 
+        hsv_image = hsv_image.flatten()   
+        hsv_image = hsv_image / 255.0  # norm  
+    
+        features = np.hstack([hog_features, hsv_image, edges_resized, rm])  
+         
         return features
 
     def show_image(self, img):

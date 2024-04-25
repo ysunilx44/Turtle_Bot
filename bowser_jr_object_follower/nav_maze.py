@@ -83,7 +83,7 @@ class nav_maze(Node):
         self.update_Odometry(data)
 
         globPos = np.array([self.globalPos.x, self.globalPos.y])
-        frontal_dist_d = 0.525 # 0.5 to 0.55
+        frontal_dist_d = 0.575 # 0.525 to 0.55
         eps = 0.013
 
         # print("curr state",self.curr_state)
