@@ -47,7 +47,7 @@ class MinimalVideoSubscriber(Node):
 		#Declare that the minimal_video_subscriber node is subcribing to the /camera/image/compressed topic.
 		self._video_subscriber = self.create_subscription(
 				CompressedImage,
-				'/find_object/compressed',
+				'/image_raw/compressed',
 				self._image_callback,
 				image_qos_profile)
 		self._video_subscriber # Prevents unused variable warning.

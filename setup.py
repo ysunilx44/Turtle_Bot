@@ -26,6 +26,8 @@ setup(
             'chase_object_node=bowser_jr_object_follower.chase_object:main',
             'get_nearest_object_node=bowser_jr_object_follower.get_nearest_object:main',
             'go_to_goal_node=bowser_jr_object_follower.go_to_goal:main',
+            'get_dist_node=bowser_jr_object_follower.get_dist:main',
+            'identify_sign_node=bowser_jr_object_follower.identify_sign:main'
         ],
     },
 )

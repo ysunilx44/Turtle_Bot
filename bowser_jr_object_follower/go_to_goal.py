@@ -77,7 +77,7 @@ class go_to_goal(Node):
             self.i += 1
             if self.i == 3:
                 self.vel.linear.x = 0.0
-                self.vel.angular.z = 1.0
+                self.vel.angular.z = 0.0
             else:
                 x_g = self.waypoints[self.i]
 
@@ -169,7 +169,7 @@ class go_to_goal(Node):
 
         if self.i == 3:
             self.vel.linear.x = 0.0
-            self.vel.angular.z = 1.0
+            self.vel.angular.z = 0.0
         print("vel", self.vel)
         self.vel_publisher.publish(self.vel)
         

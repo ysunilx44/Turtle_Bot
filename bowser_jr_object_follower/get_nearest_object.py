@@ -55,7 +55,7 @@ class get_nearest_object(Node):
         self.obj.x = float(min_distance)
         self.obj.z = float(angle_to_object)
         self.obj_publisher.publish(self.obj)
-        #print(self.obj)                
+        print(self.obj)                
 
         
 
