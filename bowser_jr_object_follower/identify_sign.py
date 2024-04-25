@@ -54,7 +54,7 @@ class identify_sign(Node):
         self.state_publisher = self.create_publisher(Point, '/state', 10)
         self.state = Point()
         self.clf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/svm_classifier_model.joblib')
-        self.svmclf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/svm_ycroppede_classifier_model.joblib')
+        self.svmclf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/svm_no_wall_classifier_model.joblib')
         self.MLPclf = load('/home/ysunil3/turtlebot3_ws/src/bowser_jr_object_follower/Lab 6/MLP_ycropped_classifier_model.joblib')
         self.count = 0.0
         # self.blueLower = (100,150,50)
@@ -66,7 +66,7 @@ class identify_sign(Node):
         features = np.array([features])
         featuresog = self.preprocess_image_og(CompressedImage)
         featuresog = np.array([featuresog])
-        y_pred_og = self.clf.predict(featuresog)
+        # y_pred_og = self.clf.predict(featuresog)
         y_pred_svm = self.svmclf.predict(features)
         y_pred_MLP = self.MLPclf.predict(features)
         # print("og", y_pred_og) 

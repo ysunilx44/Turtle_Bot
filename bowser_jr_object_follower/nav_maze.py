@@ -86,7 +86,7 @@ class nav_maze(Node):
         frontal_dist_d = 0.525 # 0.5 to 0.55
         eps = 0.013
 
-        print("curr state",self.curr_state)
+        # print("curr state",self.curr_state)
 
         #State machine
         if self.curr_state == 1: #Go straight
@@ -102,7 +102,7 @@ class nav_maze(Node):
             k_linear = 0.74 #was 0.24
             self.vel.linear.x = float(k_linear*dist)
             # self.x_tau = globPos
-            print("dist", dist)
+            # print("dist", dist)
             if dist <= eps:
                  self.curr_state = 2
                  self.state_changed = True
@@ -120,28 +120,28 @@ class nav_maze(Node):
             if self.count < img_num:
                 self.states[0][self.count] = int(self.state)
                 self.count += 1
-                print("img_count", self.count)
-                print("state from camera", self.state)
-                print("state from camera count", self.state_count)
+                # print("img_count", self.count)
+                # print("state from camera", self.state)
+                # print("state from camera count", self.state_count)
             else: 
-                print("states vec", self.states[0])
-                print("st mode", st.mode(self.states[0]))
+                # print("states vec", self.states[0])
+                # print("st mode", st.mode(self.states[0]))
                 self.curr_state = int(st.mode(self.states[0]))
                 # self.states[0][-1] = 6
                 
                 self.state_changed = True
-                print("state from camera", self.curr_state)
+                # print("state from camera", self.curr_state)
         elif self.curr_state == 3: #Turn left
             if self.state_changed:
                 self.wrap_theta(np.pi/2)
                 self.state_changed = False
             theta_curr = self.globalAng
             theta_curr = np.arctan2(np.sin(theta_curr), np.cos(theta_curr))
-            print("theta curr wrapped", theta_curr)
+            # print("theta curr wrapped", theta_curr)
             e_theta = self.theta_d - theta_curr
-            print("e_theta", e_theta)
+            # print("e_theta", e_theta)
             e_theta = np.arctan2(np.sin(e_theta), np.cos(e_theta))
-            print("e_theta wrapped", e_theta)
+            # print("e_theta wrapped", e_theta)
             k_theta = 2
             self.vel.angular.z = float(k_theta*e_theta)
 
@@ -153,14 +153,14 @@ class nav_maze(Node):
             if self.state_changed:
                 self.wrap_theta(-np.pi/2)
                 self.state_changed = False
-            print("theta_d", self.theta_d)
+            # print("theta_d", self.theta_d)
             theta_curr = self.globalAng
             theta_curr = np.arctan2(np.sin(theta_curr), np.cos(theta_curr))
-            print("theta curr wrapped", theta_curr)
+            # print("theta curr wrapped", theta_curr)
             e_theta = self.theta_d - theta_curr
-            print("e_theta", e_theta)
+            # print("e_theta", e_theta)
             e_theta = np.arctan2(np.sin(e_theta), np.cos(e_theta))
-            print("e_theta wrapped", e_theta)
+            # print("e_theta wrapped", e_theta)
             k_theta = 2
             self.vel.angular.z = float(k_theta*e_theta)
 
