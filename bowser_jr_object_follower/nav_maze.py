@@ -83,7 +83,7 @@ class nav_maze(Node):
         self.update_Odometry(data)
 
         globPos = np.array([self.globalPos.x, self.globalPos.y])
-        frontal_dist_d = 0.575 # 0.525 to 0.55
+        frontal_dist_d = 0.525 # 0.525 to 0.55
         eps = 0.013
 
         # print("curr state",self.curr_state)
@@ -109,7 +109,7 @@ class nav_maze(Node):
         elif self.curr_state == 2: #Identify sign
             self.vel.angular.z = 0.0
             self.vel.linear.x = 0.0
-            img_num = 100
+            img_num = 10
             
             # for x in range(img_num):    
             #     states[0][x] = int(self.state)
@@ -186,6 +186,9 @@ class nav_maze(Node):
         elif self.curr_state == 6: #Goal
             self.vel.angular.z = 0.0
             self.vel.linear.x = 0.0
+            if self.state_changed:
+                print("Goal Reached!")
+                self.state_changed = False
 
         if (self.vel.linear.x > 0.15):
                 self.vel.linear.x = 0.15
